@@ -1,25 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from "react";
+import { RecoilRoot } from "recoil";
+import { Router, Switch, Route } from "wouter";
+import HomeScreen from "./screens/HomeScreen";
+import DeckScreen from "./screens/DeckScreen";
+import StudyScreen from "./screens/StudyScreen";
+import OfflineBanner from "./components/OfflineBanner";
+import Header from "./components/Header";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Suspense fallback={<div/>}>
+      <RecoilRoot>
+        <Router base="/flash">
+          <OfflineBanner />
+          <Header />
+          <Switch>
+            <Route path="/decks/:id?">
+              {(params) => <DeckScreen deckId={params.id ?? ""} />}
+            </Route>
+            <Route path="/study/:id">
+              {(params) => <StudyScreen deckId={params.id ?? ""} />}
+            </Route>
+            <Route path="/">
+              <HomeScreen />
+            </Route>
+          </Switch>
+        </Router>
+      </RecoilRoot>
+    </Suspense>
   );
 }
 
